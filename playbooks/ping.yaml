@@ -1,0 +1,12 @@
+---
+- name: Get status of rpios agents
+  hosts: rpios_cluster
+
+  tasks:
+    - name: Ping rpios agents
+      ping:
+
+#    - name: Show all interfaces
+#      shell:
+#        cmd: ip link show
+...
