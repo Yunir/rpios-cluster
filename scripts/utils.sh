@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+# download the iso file
+IMAGE_NAME=ubuntu-20.04.3-preinstalled-server-arm64+raspi.img
+curl -O https://cdimage.ubuntu.com/releases/20.04.3/release/$IMAGE_NAME.xz 
+unxz $IMAGE_NAME.xz
+sudo dd if=$IMAGE_NAME of=/dev/sda bs=4M conv=fsync
+
 # run after burning iso image to micro-sd card
 pushd ../cloud-init
 cp * /Volumes/system-boot/

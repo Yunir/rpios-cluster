@@ -1,0 +1,36 @@
+---
+- name: Prepare MicroSD for Raspberry Pi
+  hosts: 127.0.0.1 
+  vars:
+    image_ver: 20.04.3
+    image_name: ubuntu-{{image_ver}}-preinstalled-server-arm64+raspi
+    work_dir: /tmp
+    microsd_name: sdX
+  tasks:
+    - name: Check image exist
+      stat:
+        path: "{{work_dir}}/{{image_name}}.img"
+      register: image_file
+
+    - name: Download compressed image
+      get_url: 
+        url: https://cdimage.ubuntu.com/releases/{{image_ver}}/release/{{image_name}}.img.xz
+        dest: "{{work_dir}}/{{image_name}}.img.xz"
+      when: not image_file.stat.exists
+    
+    - name: Uncompress the image
+      command:
+        cmd: unxz {{work_dir}}/{{image_name}}.img.xz
+        creates: "{{work_dir}}/{{image_name}}.img" 
+
+    - name: Check microsd exist
+      stat: 
+        path: /dev/{{microsd_name}}
+      register: microsd
+
+    - name: Flash image to microsd
+      command:
+        cmd: dd if={{work_dir}}/{{image_name}}.img of=/dev/{{microsd_name}} bs=4M
+      when: microsd.stat.exists
+      become: yes
+...
