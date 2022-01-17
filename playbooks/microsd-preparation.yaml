@@ -8,7 +8,7 @@
     microsd_name: sdX
     microsd_mount_path: /mnt/microsd
     host_id: 9
-    public_ssh_key: PUT_YOUR_PUB_SSH_KEY_HERE
+    github_username: yunir
   tasks:
     - name: Check image exist
       stat:
@@ -57,10 +57,18 @@
         src: ../files/network-config
       become: yes
 
+    - name: Get public ssh key
+      uri:
+        url: https://github.com/{{github_username}}.keys
+        return_content: yes
+      register: public_ssh_key_response
+
     - name: Substitute cloud-init user data on boot partition 
       template: 
         dest: "{{microsd_mount_path}}"
         src: ../files/user-data
+      vars:
+        public_ssh_key: "{{public_ssh_key_response.content}}"
       become: yes
 
     - name: Unmount microsd's boot partition
