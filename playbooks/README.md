@@ -6,5 +6,5 @@
 - execute playbook setting `microsd_name`
 
 ```
-$ ansible-playbook -K -e "microsd_name=sdX" microsd-preparation.yaml
+$ ansible-playbook -Ke "microsd_name=sdX host_id=9" microsd-preparation.yaml
 ```

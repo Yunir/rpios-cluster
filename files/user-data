@@ -1,6 +1,6 @@
 #cloud-config
 
-hostname: rpios-2
+hostname: rpios-{{host_id}}
 
 system_info:
   default_user:
@@ -16,7 +16,7 @@ chpasswd:
 ssh_pwauth: false
 
 ssh_authorized_keys:
-  - SET_YOUR_PUBLIC_SSH_KEY
+  - {{public_ssh_key}}
 
 power_state:
   mode: reboot

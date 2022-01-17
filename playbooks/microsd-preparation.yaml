@@ -6,6 +6,9 @@
     image_name: ubuntu-{{image_ver}}-preinstalled-server-arm64+raspi
     work_dir: /tmp
     microsd_name: sdX
+    microsd_mount_path: /mnt/microsd
+    host_id: 9
+    public_ssh_key: PUT_YOUR_PUB_SSH_KEY_HERE
   tasks:
     - name: Check image exist
       stat:
@@ -32,5 +35,37 @@
       command:
         cmd: dd if={{work_dir}}/{{image_name}}.img of=/dev/{{microsd_name}} bs=4M
       when: microsd.stat.exists
+      become: yes
+
+    - name: Create directory to mount microsd's boot partition
+      file: 
+        path: "{{microsd_mount_path}}"
+        state: directory
+      become: yes
+
+    - name: Mount microsd's boot partition to directory
+      mount:
+        path: "{{microsd_mount_path}}"
+        src: /dev/{{microsd_name}}1
+        fstype: vfat
+        state: mounted
+      become: yes
+
+    - name: Substitute cloud-init network configuration on boot partition
+      template: 
+        dest: "{{microsd_mount_path}}"
+        src: ../files/network-config
+      become: yes
+
+    - name: Substitute cloud-init user data on boot partition 
+      template: 
+        dest: "{{microsd_mount_path}}"
+        src: ../files/user-data
+      become: yes
+
+    - name: Unmount microsd's boot partition
+      mount:
+        path: "{{microsd_mount_path}}" 
+        state: absent
       become: yes
 ...
