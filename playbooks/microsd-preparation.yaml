@@ -68,7 +68,8 @@
         dest: "{{microsd_mount_path}}"
         src: ../files/user-data
       vars:
-        public_ssh_key: "{{public_ssh_key_response.content}}"
+        github_public_ssh_key: "{{public_ssh_key_response.content}}"
+        file_public_ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCh0heeYjqJtdWKGwMFDquKssP8KHspIEEQ6Q+oks0V1F5UmykDNK62eh9ek1cSesmtr7JJzswZM87tcZkEFW/ecx2SSqH8R6oHQnEatyFKO3Uq+IaHzz7MRu4TnFRhtxIGF9vTYBsUzBjlBc5u34QaeJTBKHSgI0ohDvH/FFYQpzD42v04Om7Zw4S8OOLFEm1zShJiOkVauqIBwEsjG9Df0X2/5pJR3c1OAz2GJlDcqaasBhJ384Jy+oK2oEniDi82j/PluRIYGal5EUW0NThd4iRvsnSx2AmO46US+OMPEDcw66cNrRUWczuIzDgmrRyxAk6t/cKN28m5qNLWUglFYbi4ho0bRqC0fE245Ri/InoJLG78nCzeZKm+NKIvV8i41b4L70LiEHXh50iqRjYEp5G5PutQu5u+dq5OSHTIgLZDFcDK8j8fm75AzUmJJyxE/DyIcbhlaDu/vXglOkgJS5BuLDe3kFUvTAOxeQaeleWM4AXMMKx+LrtcB8vscZs= yunir@impression"
       become: yes
 
     - name: Unmount microsd's boot partition

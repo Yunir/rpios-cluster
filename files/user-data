@@ -16,7 +16,8 @@ chpasswd:
 ssh_pwauth: false
 
 ssh_authorized_keys:
-  - {{public_ssh_key}}
+  - {{github_public_ssh_key}}
+  - {{file_public_ssh_key}}
 
 power_state:
   mode: reboot
