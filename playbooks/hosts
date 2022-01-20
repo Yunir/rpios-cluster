@@ -5,3 +5,10 @@ rpios-3 ansible_host=192.168.0.203
 
 [rpios_cluster:vars]
 ansible_user=agent
+
+[k3s_server]
+rpios-1
+
+[k3s_agent]
+rpios-2
+rpios-3

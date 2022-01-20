@@ -1,0 +1,58 @@
+---
+- name: Setup k3s kubernetes cluster
+  hosts: all
+  gather_facts: no
+  vars:
+    github_username: yunir
+  tasks:
+    - name: Setup cgroups for k3s
+      lineinfile:
+        path: /boot/firmware/cmdline.txt  
+        backrefs: yes
+        regexp: '^(.*(?<!{{flags}}))$'
+        line: '\1 {{flags}}'
+      vars:
+        flags: "cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1"
+      become: yes
+      register: set_cgroups
+
+    - name: Reboot to apply cgroups settings
+      reboot:
+      become: yes
+      when: set_cgroups.changed
+
+    - name: Setup k3s server
+      block: 
+        - name: Check k3s folder
+          stat:
+            path: /var/lib/rancher/k3s
+          register: k3s_dir
+
+        - name: Install k3s server
+          shell:
+            cmd: 'curl -sfL https://get.k3s.io | sh -'
+          when: not k3s_dir.stat.exists 
+
+        - name: Gather k3s server token
+          command:
+            cmd: cat /var/lib/rancher/k3s/server/node-token
+          become: yes
+          register: k3s_server_token
+
+        - name: Save token to facts
+          set_fact: 
+            k3s_token: "{{k3s_server_token.stdout}}"
+      when: inventory_hostname in groups['k3s_server']
+
+    - name: Setup k3s agents
+      block:
+        - name: Check k3s folder
+          stat:
+            path: /var/lib/rancher/k3s
+          register: k3s_dir
+
+        - name: Install k3s server
+          shell:
+            cmd: curl -sfL https://get.k3s.io | K3S_URL=https://192.168.0.201:6443 K3S_TOKEN={{hostvars['rpios-1']['k3s_token']}} sh -
+          when: not k3s_dir.stat.exists
+      when: inventory_hostname in groups['k3s_agent']

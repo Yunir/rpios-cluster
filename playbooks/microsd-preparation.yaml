@@ -1,6 +1,7 @@
 ---
 - name: Prepare MicroSD for Raspberry Pi
   hosts: 127.0.0.1 
+  connection: local
   vars:
     image_ver: 20.04.3
     image_name: ubuntu-{{image_ver}}-preinstalled-server-arm64+raspi
